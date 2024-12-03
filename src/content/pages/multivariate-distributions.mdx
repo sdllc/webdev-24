@@ -1,0 +1,176 @@
+---
+title: Multivariate Distributions
+description: 'Using multivariate distributions with the RiskAMP add-in'
+
+---
+
+import Spreadsheet from '../../components/spreadsheet.astro';
+
+# Creating and using correlated multivariate distributions
+
+--------------------------------------------------------------------------------
+
+Multivariate distributions are sets of random distributions that include some internal correlation. For
+example, if you are modeling various financial sectors, you might find that small cap equities are
+correlated with large cap equities; that each of these are correlated with international equities; and that
+all of these are correlated (perhaps negatively) with fixed income.
+
+Multivariate distributions are useful in analyzing these kinds of models, because you can design
+distributions with internal correlations and then test them via simulation.
+
+> You can now create a multivariate portfolio model in just a few clicks 
+> with our web platform, then run it online or download to Excel. Visit 
+> [web.riskamp.com](https://web.riskamp.com) 
+> and click the menu *Utilities* &gt; *Multivariate Portfolio*.
+> (But you should still read this page for the details!)
+
+## RiskAMP Multivariate Functions
+
+The current version of the RiskAMP Add-in includes a set of multivariate distributions. There are
+functions for modeling multivariate normal, lognormal, PERT, uniform, and triangular distributions.
+
+All multivariate functions are prefaced with `Multivariate.`. Multivariate functions are
+available for Normal, Log-normal, Uniform, Triangular, Beta and Beta-PERT distributions.
+
+Older versions of the add-in had a different function for modeling the multivariate normal distribution ---
+we've left that function in for compatibility, but we would recommend that new models be built
+using the new functions.
+
+Constructing a distribution is straightforward, but it can be confusing because there are a number of
+specific requirements. Please read through this note and have a look at the example files to make sure you
+understand how it works.
+
+You can try out the multivariate functions using the embedded spreadsheets on this page,
+and you can download each of them to try them in Excel (use the links on the right of each 
+example).
+
+## Correlation Matrix
+
+Before constructing a distribution, you will need a correlation matrix describing the 
+correlations among your several variates:
+
+<Spreadsheet doc="/docs/correlation-matrix.json" />
+
+(These values were selected randomly and don't reflect real-world correlation).
+
+There are three requirements for the correlation matrix:
+
+ + The matrix must have unit value (1.0) in the diagonal. Essentially this means that every 
+   value is 100% correlated with itself. (No other value would make sense).
+
+ + The matrix must be [symmetric][1]; or, you can omit the upper-triangular, as
+   in this example. We recommend using a matrix like this (omitting the upper
+   triangular) as it reduces the chance of error.
+  
+ + The matrix must be [positive-definite][2]. The specifics of this are beyond
+   the scope of this note; however if you generate your matrix from observed
+   correlations, it will likely be positive-definite.
+
+The *Correlation Matrix* tool on the RiskAMP toolbar can check if a matrix is
+positive-definite, and if not, make small adjustments.
+
+## Constructing a Distribution
+
+For this example we will be using a multivariate normal distribution. Using other
+distributions is similar, except that other distributions may take different
+parameters.
+
+When constructing a multivariate distribution, especially when you are getting
+started, we recommend using the *Insert function* dialog box (the f(x) button in Excel).
+
+To construct a multivariate distribution, you must lay out the individual
+functions in a contiguous row or column. In this example I am using 4 cells in
+a column.
+
+<Spreadsheet doc="/docs/multivariate-parameters.json" options={{scroll: 'A8'}} />
+
+The first parameter to any multivariate distribution function is the set of
+individual distributions (the range containing the 4 cells). This is a little
+unusual, because each cell refers back to itself. Normally Excel would treat
+this as a circular reference, but here we use it to identify the full multivariate
+distribution.
+
+This parameter is the same for all the distribution cells. Therefore we
+recommend that you use absolute (`$`) references. That will also allow you to
+copy-and-paste the cell into the table.
+
+In the example, this parameter is `$F$11:$F$14`.
+
+The second parameter refers to the correlation matrix. This should be the
+range containing the correlation matrix, and not including any header row or
+column; in the example, it is a 4x4 cell range. Again because this is the same
+for all the cells, we recommend using absolute (`$`) references.
+
+In the example, this parameter is `$C$4:$F$7`.
+
+Additional parameters to the multivariate distribution functions are different
+depending on the particular distribution. The normal distribution takes a mean
+and standard deviation.
+
+In the example, these values are laid out in a table. This allows us to more
+easily make adjustments to the values, and it also allows us to copy and paste
+the distribution cells. Both of these help reduce the chance of errors in the
+functions.
+
+For the first cell in the table, in row 12, the values are `C11` and `D11`.
+These refer back to the columns in the table. The full formula for the first
+row in the table, in `F11`, is
+
+```
+=Multivariate.Normal($F$11:$F$14, $C$4:$F$7, C11, D11)
+```
+
+Because the first two parameters use absolute (`$`) references, and the second
+two use relative references, we can just copy-and-paste the value of `F11` into
+the rest of the table, `F12:F14`.
+
+#### Verifying Correlation
+
+You can verify correlations among the variates using the function
+`SimulationCorrelationMatrix`. This function will show the correlation among
+a set of values in a range. 
+
+<Spreadsheet doc="/docs/validating-correlation.json" options={{scroll: 'A15'}} />
+
+Try changing the correlation matrix (in cells `C4:F7`), then run a simulation to
+see the validation (in `C18:F21`). If you make a change to the correlation 
+matrix and see **#ERR** in the multivariate distribution cells, that probably
+means the matrix is not positive-definite.
+
+#### Mixing Distributions
+
+A correlated multivariate distribution can use different individual
+sub-distributions. Use the same techique as the example above, but change
+individual functions to your desired distribution.
+
+<Spreadsheet doc="/docs/mixed-multivariate-distribution.json" options={{scroll: 'A8'}} />
+
+<br/>
+This graph is connected to the above model and shows the cumulative
+distributions of the various random fields:
+
+<div id="mixed-multivariate-chart" class="embedded-chart size-2"></div>
+
+#### Multi-Period Multivariate Distribution
+
+The last example is a model that uses separate multivariate distributions in
+multiple periods.
+
+The parameters for the distribution are the same as in the first example; it
+uses the same correlation matrix and the same table of means and standard
+deviations.
+
+Here, however, the multivariate distribution is laid out horizontally. Each row
+in the table contains a separate multivariate distribution representing returns
+in one period. The first parameter to the functions in each row is a reference
+to the four cells in that row.
+
+<Spreadsheet doc="/docs/multi-period-multivariate.json" class="taller" options={{scroll: 'F1', expand_formula_button: true }} />
+
+This example also adds portfolio weights to calculate the aggregate return in
+each period. The example omits things like inflation and costs associated with
+rebalancing the portfolio in each period.
+
+[1]: http://en.wikipedia.org/wiki/Symmetric_matrix
+[2]: http://en.wikipedia.org/wiki/Positive-definite_matrix
+

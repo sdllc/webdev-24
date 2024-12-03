@@ -1,0 +1,22 @@
+{
+  "name": "new-riskamp-website",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/mdx": "^3.1.9",
+    "astro": "^4.16.16",
+    "astro-collection-search": "^0.0.13",
+    "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "riskamp-web": "file:../RAW",
+    "sass": "^1.81.0"
+  }
+}

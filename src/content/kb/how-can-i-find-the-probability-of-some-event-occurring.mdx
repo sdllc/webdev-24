@@ -1,0 +1,23 @@
+---
+title: "How can I find the probability of some event occuring?"
+tags: ["events"]
+---
+
+import Spreadsheet from '../../components/spreadsheet.astro';
+
+You have some trigger event in your model that is either true or false.
+How can you find the probability that this event happens (or doesn't happen)?
+
+The trick is to use this event to set some other cell to zero or one, using
+an `IF` function. Here, I am checking whether the market return is greater than 
+zero (in cell `C6`). I turn that into a 1 or 0 in cell `C7`:
+
+<Spreadsheet doc='/docs/event-probability.json' />
+
+After running a simulation, the average value will equal the 
+probability of that event happening during the simulation. You can use the 
+`SimulationMean` function to get the average value (in cell `C9`).
+
+Why does that work? It's the same as counting up all the times during the
+simulation that the event was true, and then dividing it by the total number
+of trials -- this is the probability.

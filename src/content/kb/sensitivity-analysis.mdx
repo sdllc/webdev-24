@@ -1,0 +1,32 @@
+---
+title: 'Sensitivity Analysis'
+tags: ["regression", "tips"]
+---
+
+import Spreadsheet from '../../components/spreadsheet.astro';
+
+Single-factor sensitivity is a useful way to understand risk in a model.  You 
+can look at single-factor sensitivity using the R-squared (R2) value from a 
+linear regression; this is also called the *coefficient of determination*.
+
+The R2 value will tell you how much of the variance in the model is explained 
+by variance in one or more of the inputs to the model.  The add-in function 
+`SimulationRSquared` returns the R2 statistic for an *independent* value and 
+a *dependent* value.  
+
+<Spreadsheet doc='/docs/single-factor-sensitivity.json' class="taller" />
+
+The *independent* value is the input -- generally one of the random variables 
+in your model.  The *dependent* value is the output -- the result of the model.  
+
+Another way to think about this is that the result *depends on* the input.
+
+[picture]
+
+Use the `SimulationRSquared` function to create a table of R2 values for your 
+model, and then add a donut chart for a visual representation.
+
+For more, see [wikipedia][1].
+
+[1]: http://en.wikipedia.org/wiki/Coefficient_of_determination
+

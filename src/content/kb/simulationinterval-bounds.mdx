@@ -1,0 +1,45 @@
+---
+title: SimulationInterval bounds
+tags: ["tips", "features"]
+keywords: simulation interval interval analysis
+---
+
+import Spreadsheet from '../../components/spreadsheet.astro';
+
+The `SimulationInterval` function returns the portion of a simulation -- as a percentage -- that falls within some bounds.
+
+If you omit one of the bounds, then the function will return the portion that falls above (or below) the given bound.  For example,
+
+```
+=SimulationInterval(A1,0,1)
+```
+
+returns the portion of the simulation that falls within 0 and 1, inclusive.
+
+```
+=SimulationInterval(A1,0)
+```
+
+returns the portion of the simulation that is greater than or equal to zero (only the first bound is provided); and 
+
+```
+=SimulationInterval(A1,,0)
+```
+
+returns the portion of the simulation that is less than or equal to zero (note the empty parameter -- the comma must still be provided).
+
+The bounds are inclusive, meaning that in the first example, it returns results in which `0 <= A1 <= 1`.  This has some implications for creating tables.  
+
+For continuous variables, it is very unlikely that you will have an exact value 0 or 1, so this is functionally equivalent to `0 < A1 < 1`.  Therefore when creating a table, you can use sets of ascending values.
+For example, you could create a table:
+
+<Spreadsheet class="short" doc="/docs/simulation-interval-1.json" />
+
+<br/>
+
+However for discrete values, you may have exact matches.  In that event, you 
+should create a table using only one parameter (minimum or maximum, depending 
+on your application) and subtract.
+
+<Spreadsheet class="short" doc="/docs/simulation-interval-2.json" />
+

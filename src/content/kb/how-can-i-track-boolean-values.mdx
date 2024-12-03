@@ -1,0 +1,14 @@
+---
+title: 'How Can I Track Boolean (TRUE or FALSE) Values?'
+tags: ["tips"]
+---
+
+Our add-in won't track boolean values by default.  It is designed to track 
+numbers only.  If you want to track a boolean value, use an IF function to 
+set the value to 1 or 0:
+
+```
+=IF( A1, 1, 0 )
+```
+
+Then you can track this cell normally.

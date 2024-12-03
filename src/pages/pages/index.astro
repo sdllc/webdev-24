@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+const pages = await getCollection('pages');
+import Layout from '../../layout2.astro';
+
+---
+
+<Layout>
+
+    <ul>
+      {pages.map(page => (
+        <li>
+          <a href={`${import.meta.env.BASE_URL}/pages/${page.slug}`}>{page.data.title}</a>
+        </li>
+      ))}
+    </ul>
+    
+</Layout>
+

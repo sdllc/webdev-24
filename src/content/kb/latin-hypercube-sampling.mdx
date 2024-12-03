@@ -1,0 +1,16 @@
+---
+title: 'Latin Hypercube Sampling'
+tags: ["professional edition"]
+---
+
+Latin Hypercube Sampling (LHS) is a method of sampling random numbers that attempts to distribute samples evenly over the sample space.
+
+A simple example: imagine you are generating exactly two samples from a normal distribution, with a mean of 0.   Although the probability of being positive or negative is equal, a true random number generator might return two samples less than 0, or two samples greater than 0.  LHS will always return one sample less than 0 and one sample greater than 0.  For two samples, it will divide the sample space in two, and generate one sample from each side.
+
+In practice, this can be used to generate "better" simulation results, with lower standard error levels, with fewer trials.  For complex models with many random variables, this means you can generate results in less time.
+
+For more, see wikipedia:
+
+http://en.wikipedia.org/wiki/Latin_hypercube_sampling
+
+LHS is available in the Professional edition of the add-in.  It is enabled by default.  To control this setting, click the *Advanced Properties* button in the Monte Carlo tab.

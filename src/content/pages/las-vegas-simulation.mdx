@@ -1,0 +1,106 @@
+---
+
+title: "Las Vegas Simulation"
+---
+
+
+# Support for Las Vegas Algorithms in the RiskAMP Add-in
+
+---
+
+A Las Vegas algorithm is a random search, like a Monte Carlo simulation, but
+it's guaranteed to be [correct][2] because it only includes random samples 
+that conform to the algorithm criteria. 
+
+What "correct" means depends on the 
+particular model, but Las Vegas algorithms have a mechanism for filtering 
+out random samples that don't meet the criteria. 
+
+As an example, suppose we are modeling an asset portfolio. In a standard 
+Monte Carlo simulation, we might vary the returns on the portfolio randomly
+in each period. In a Las Vegas model, we might want to understand what happens
+to the portfolio long term if there are two consecutive down quarters. In 
+this model, we still want to vary returns randomly, but for the analysis 
+we are only intereted in those iterations that meet the criteria (two 
+consecutive down quarters).
+
+[2]: https://en.wikipedia.org/wiki/Correctness_(computer_science)
+
+
+## Las Vegas Algorithms in RiskAMP
+
+We provide **Las Vegas simulation** as a building block for constructing Las 
+Vegas algorithms in Excel&reg;.
+
+The basic simulation is similar to a Monte Carlo simulation. In each trial,
+we update any random distributions in the spreadsheet. In a Las Vegas 
+simulation, you provide a function (in a spradsheet cell)
+that either accepts or rejects each iteration by returning TRUE or FALSE. 
+We refer to this as the **acccept** criteria. During
+the simulation, we only record accepted samples. 
+
+In a Las Vegas simulation, you don't specify a fixed number of trials. The 
+simulation is controlled by a second cell, returning TRUE when the 
+simulation should end; or you can specify a fixed number of accepted trials. 
+This control, whether it is a cell function 
+or a number, is the **complete** criteria. It indicates when the simulation 
+is complete.
+
+Las Vegas simulations can run indefinitely if the complete criteria is not 
+met. So we have one more control parameter, which can end the simulation if 
+a result is not found. We refer to this as the **fail** criteria. It can 
+be a spreadsheet cell returning TRUE to fail the simulation, or a total number 
+of trials (accepted + rejected) after which the simulation fails.
+This is helpful to prevent simulations running forever. It's optional, and 
+you can always stop a simulation from running manually.
+
+To run a Las Vegas simulation, click the button on the toolbar and set the 
+required criteria:
+
+![las-vegas-simulation](/img/lv-simulation.png "Las vegas simulation dialog")
+
+Settings for a Las Vegas simulation are stored with your spreasdheet so it's
+easier to re-run models.
+
+
+## Support Functions
+
+There are some new functions in the RiskAMP add-in to support Las Vegas 
+simulation. These functions report on the results of the simulation:
+
+| Function                  | Value  |
+| ------------------------- | ------ |
+| `Simulation.LV.Accepted`  | Returns the number of accepted trials in the simulation. |
+| `Simulation.LV.Rejected`  | Returns the number of rejected trials in the simulation. |
+| `Simulation.LV.Succeeded` | Returns TRUE if the complete criteria was met. Otherwise, the simulation failed or was canceled. |
+
+
+Note that when you run a Las Vegas simulation, the <code>SimulationTrials</code>
+function returns the number of accepted trials. 
+
+Statistics functions operate on stored data. During a Las Vegas simulation we
+only include accepted results, so statistics operate on accepted trials.
+
+## Other Uses
+
+You can also use Las Vegas simulation as a method of rejection sampling. 
+This is useful if you are trying to sample a nonlinear distribution or a
+partial distribution. Define a function to accept or reject individual samples 
+based on your target distribution and use the complete criteria to set the 
+number of desired samples.
+
+Once the simulation is complete, the stored data will only include accepted 
+trials so you can use the RiskAMP statistics function to analyze the resulting
+data.
+
+---
+
+For more on Las Vegas algorithms, see wikipedia:
+
+[https://en.wikipedia.org/wiki/Las_Vegas_algorithm][1]
+
+Las Vegas simulation is available in the Professional edition of the 
+RiskAMP Add-in starting in version 6. 
+
+[1]: https://en.wikipedia.org/wiki/Las_Vegas_algorithm
+

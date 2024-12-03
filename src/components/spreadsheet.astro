@@ -1,0 +1,68 @@
+---
+
+import { type MCEmbeddedSpreadsheetOptions } from 'riskamp-web';
+
+interface Props { 
+  doc?: string;
+  class?: string;
+  options?: Partial<MCEmbeddedSpreadsheetOptions>;
+}
+
+const props = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+---
+
+<script>
+
+import { RiskAMPWeb, type MCEmbeddedSpreadsheetOptions } from 'riskamp-web';
+
+for (const element of document.querySelectorAll('.embedded-spreadsheet')) {
+  if (element instanceof HTMLElement) {
+
+
+    if (!element.dataset.populated) {
+
+      let data_options: Partial<MCEmbeddedSpreadsheetOptions> = {};
+      if (element.dataset.options) {
+        data_options = JSON.parse(element.dataset.options);
+      }
+
+      const options: MCEmbeddedSpreadsheetOptions = {
+        container: element, 
+        scale: .95,
+        screen_updates: 50,
+        tab_bar: 'auto',
+
+        ...data_options
+
+      }
+
+      if (element.dataset.doc) {
+        options.document = element.dataset.doc;
+      }
+
+      element.dataset.populated = 'true';
+      RiskAMPWeb.CreateSpreadsheet(options);
+    }
+  }
+}
+
+</script>
+
+<style>
+  .embedded-spreadsheet {
+    width: 100%;
+    height: 400px;
+
+    &.taller {
+      height: 600px;
+    }
+
+  }
+</style>
+
+<div class={"embedded-spreadsheet " + (props.class || '')} 
+     data-doc={base + props.doc} 
+     data-options={props.options ? JSON.stringify(props.options) : ''}></div>
+
